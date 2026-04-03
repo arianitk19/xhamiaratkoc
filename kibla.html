@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kibla - Xhamia e Ratkocit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #070a11; 
+            color: white; 
+            overflow: hidden; 
+            height: 100vh;
+        }
+
+        .bg-mosque {
+            background-image: linear-gradient(to bottom, rgba(7, 10, 17, 0.8), rgba(7, 10, 17, 0.95)), 
+                              url('https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            height: 100vh; width: 100%; position: fixed; z-index: -1;
+        }
+
+        /* Stilimi i ri i Navbarit për të qenë identik me index.html */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+        }
+
+        .compass-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .compass-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px dashed rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s ease-out;
+        }
+
+        .needle {
+            width: 4px;
+            height: 120px;
+            background: linear-gradient(to top, transparent 50%, #10b981 50%);
+            position: absolute;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .kaaba-icon {
+            position: absolute;
+            top: -10px;
+            font-size: 24px;
+            color: #10b981;
+            filter: drop-shadow(0 0 10px #10b981);
+        }
+
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-btn:active { transform: scale(0.95); background: rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-mosque"></div>
+
+    <div class="max-w-md mx-auto h-screen flex flex-col p-6 items-center">
+        
+        <div class="w-full flex justify-between items-center mt-4 mb-12">
+            <a href="index.html" class="w-10 h-10 glass-btn flex items-center justify-center">
+                <i class="ri-arrow-left-s-line text-xl"></i>
+            </a>
+            <h1 class="text-lg font-bold tracking-tight">Drejtimi i Kiblës</h1>
+            <div class="w-10"></div>
+        </div>
+
+        <div class="text-center mb-10 opacity-0" id="info">
+            <p class="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-2">Ratkoc -> Mekë</p>
+            <h2 class="text-3xl font-black" id="degree-text">0°</h2>
+        </div>
+
+        <div class="compass-container opacity-0 scale-90" id="compassFrame">
+            <div class="compass-ring" id="compassRing">
+                <div class="kaaba-icon"><i class="ri-ancient-gate-fill"></i></div>
+            </div>
+            <div class="needle"></div>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]"></div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center max-w-[250px] opacity-0" id="instructions">
+            <p class="text-gray-400 text-sm leading-relaxed">
+                Rrotulloni telefonin derisa ikona e <span class="text-emerald-400 font-bold">Qabesë</span> të jetë në majë.
+            </p>
+            <button onclick="initCompass()" class="mt-8 px-8 py-4 glass-btn text-xs font-bold uppercase tracking-widest text-emerald-400 border-emerald-500/30">
+                Aktivizo Sensorin
+            </button>
+        </div>
+
+        <!-- Navi Bar i përditësuar (Identik me index.html) -->
+        <nav class="fixed bottom-6 left-6 right-6 h-20 glass-card flex items-center justify-around px-4 opacity-0 translate-y-10" id="bottomNav">
+            <a href="index.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition-colors">
+                <i class="ri-time-line text-2xl"></i>
+                <span class="text-[9px] font-black uppercase">Vaktet</span>
+            </a>
+            <a href="kibla.html" class="flex flex-col items-center gap-1 text-emerald-400">
+                <i class="ri-compass-3-fill text-2xl"></i>
+                <span class="text-[9px] font-black uppercase">Kibla</span>
+            </a>
+            <a href="njoftimet.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition-colors">
+                <i class="ri-notification-badge-line text-2xl"></i>
+                <span class="text-[9px] font-black uppercase">Njoftime</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        let qiblaAngle = 137; // Këndi mesatar i Kiblës për Kosovën
+
+        function initCompass() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response == 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation, true);
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+                window.addEventListener('deviceorientation', handleOrientation, true);
+            }
+        }
+
+        function handleOrientation(event) {
+            let heading = event.webkitCompassHeading || event.alpha;
+            
+            if (typeof heading !== 'undefined') {
+                const rotateCompass = heading;
+                gsap.to("#compassRing", {
+                    rotation: -rotateCompass + qiblaAngle,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+
+                document.getElementById('degree-text').innerText = Math.round(heading) + "°";
+            }
+        }
+
+        // Animacionet hyrëse duke përfshirë edhe Navbar-in
+        document.addEventListener('DOMContentLoaded', () => {
+            const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+            tl.to("#info", { opacity: 1, duration: 1 })
+              .to("#compassFrame", { opacity: 1, scale: 1, duration: 1.5 }, "-=0.8")
+              .to("#instructions", { opacity: 1, duration: 1 }, "-=1")
+              .to("#bottomNav", { opacity: 1, y: 0, duration: 1 }, "-=1.2");
+        });
+    </script>
+</body>
+</html>
