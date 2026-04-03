@@ -87,27 +87,43 @@
         <section class="mb-8 opacity-0 translate-y-10" id="controls">
             <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 ml-2">Alarmi i Vakteve</h2>
             <div class="glass-panel p-2">
-                <div class="flex items-center justify-between p-4 border-b border-white/5">
-                    <span class="font-semibold text-sm">Sabahu</span>
-                    <label class="switch">
-                        <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="flex items-center justify-between p-4 border-b border-white/5">
-                    <span class="font-semibold text-sm text-gray-300">Dreka</span>
-                    <label class="switch">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="flex items-center justify-between p-4">
-                    <span class="font-semibold text-sm">Akshami</span>
-                    <label class="switch">
-                        <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                
+    <div class="flex items-center justify-between p-4 border-b border-white/5">
+        <span class="font-semibold text-sm">Sabahu</span>
+        <label class="switch">
+            <input type="checkbox" id="switch-Sabahu" onchange="toggleAlarm('Sabahu', this)">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="flex items-center justify-between p-4 border-b border-white/5">
+        <span class="font-semibold text-sm text-gray-300">Dreka</span>
+        <label class="switch">
+            <input type="checkbox" id="switch-Dreka" onchange="toggleAlarm('Dreka', this)">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="flex items-center justify-between p-4 border-b border-white/5">
+        <span class="font-semibold text-sm text-gray-300">Ikindia</span>
+        <label class="switch">
+            <input type="checkbox" id="switch-Ikindia" onchange="toggleAlarm('Ikindia', this)">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="flex items-center justify-between p-4 border-b border-white/5">
+        <span class="font-semibold text-sm">Akshami</span>
+        <label class="switch">
+            <input type="checkbox" id="switch-Akshami" onchange="toggleAlarm('Akshami', this)">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="flex items-center justify-between p-4">
+        <span class="font-semibold text-sm text-gray-300">Jacia</span>
+        <label class="switch">
+            <input type="checkbox" id="switch-Jacia" onchange="toggleAlarm('Jacia', this)">
+            <span class="slider"></span>
+        </label>
+    </div>
+</div>
             </div>
         </section>
 
@@ -159,6 +175,87 @@
               .to("#messages", { opacity: 1, y: 0, duration: 1 }, "-=0.8")
               .to("#bottomNav", { opacity: 1, y: 0, duration: 1 }, "-=1.2");
         });
+
+
+
+
+
+
+
+
+        // 1. Regjistrimi i Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
+
+// 2. Funksioni për Ndezje/Fikje
+async function toggleAlarm(vakti, element) {
+    if (element.checked) {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+            localStorage.setItem(`alarm-${vakti}`, "active");
+            // Test i shpejtë konfirmues
+            const reg = await navigator.serviceWorker.ready;
+            reg.showNotification("Xhamia e Ratkocit", {
+                body: `Njoftimet për ${vakti} u aktivizuan.`,
+                icon: "https://cdn-icons-png.flaticon.com/512/2950/2950657.png",
+                vibrate: [100, 50, 100]
+            });
+        } else {
+            alert("Ju lutem lejoni njoftimet në settings të telefonit.");
+            element.checked = false;
+        }
+    } else {
+        localStorage.removeItem(`alarm-${vakti}`);
+    }
+}
+
+// 3. Mekanizmi i kontrollit të kohës (Çdo 60 sekonda)
+setInterval(() => {
+    const tani = new Date();
+    const oraAktuale = tani.getHours().toString().padStart(2, '0') + ":" + 
+                       tani.getMinutes().toString().padStart(2, '0');
+
+    // Ky orar duhet të përditësohet sipas kohës reale të vaktit
+    const orariVakteve = {
+        "Sabahu": "04:45",
+        "Dreka": "12:50",
+        "Ikindia": "16:15",
+        "Akshami": "19:55",
+        "Jacia": "21:20"
+    };
+
+    for (let vakti in orariVakteve) {
+        if (orariVakteve[vakti] === oraAktuale) {
+            if (localStorage.getItem(`alarm-${vakti}`) === "active") {
+                shfaqNjoftimin(vakti);
+            }
+        }
+    }
+}, 60000);
+
+function shfaqNjoftimin(emriVaktit) {
+    if (Notification.permission === "granted") {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification("Koha e Namazit", {
+                body: `Është koha e vaktit të ${emriVaktit} në Ratkoc.`,
+                icon: "https://cdn-icons-png.flaticon.com/512/2950/2950657.png",
+                vibrate: [500, 100, 500],
+                tag: 'vakti-alarm',
+                renotify: true
+            });
+        });
+    }
+}
+
+// 4. Rivendos switch-at kur hapet App-i
+document.addEventListener('DOMContentLoaded', () => {
+    ['Sabahu', 'Dreka', 'Ikindia', 'Akshami', 'Jacia'].forEach(v => {
+        const status = localStorage.getItem(`alarm-${v}`);
+        const sw = document.getElementById(`switch-${v}`);
+        if (status === "active" && sw) sw.checked = true;
+    });
+});
     </script>
 </body>
 </html>
