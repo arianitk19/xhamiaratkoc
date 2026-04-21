@@ -1,22 +1,22 @@
 {
-  "short_name": "Xhamia",
-  "name": "Xhamia e Ratkocit",
-  "icons": [
-    {
-      "src": "https://img.icons8.com/?size=100&id=qV3RWgjcQdTX&format=png&color=000000",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "https://img.icons8.com/?size=100&id=qV3RWgjcQdTX&format=png&color=000000",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": "/index.html",
-  "background_color": "#070a11",
-  "display": "standalone",
-  "scope": "/",
-  "theme_color": "#070a11",
-  "description": "Vaktet e namazit dhe njoftimet për Xhaminë e Ratkocit"
+  "short_name": "Xhamia",
+  "name": "Xhamia e Ratkocit",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/?size=100&id=b6MwkYHrCzds&format=png&color=000000",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://img.icons8.com/?size=100&id=b6MwkYHrCzds&format=png&color=000000",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#070a11",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#070a11",
+  "description": "Vaktet e namazit dhe njoftimet për Xhaminë e Ratkocit"
 }
