@@ -1,7 +1,7 @@
 {
   "name": "Xhamia e Ratkocit",
   "short_name": "Xhamia Ratkoc",
-  "description": "Aplikacioni zyrtar për kohët e namazit dhe qasjen në Xhaminë e Ratkocit.",
+  "description": "Orari i namazit dhe drejtimi i Kibles për fshatin Ratkoc.",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0A0C10",
@@ -9,12 +9,12 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2318/2318915.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/2913/2913380.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2318/2318915.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/2913/2913380.png",
       "sizes": "512x512",
       "type": "image/png"
     }
