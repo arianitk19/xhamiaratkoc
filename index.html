@@ -537,34 +537,76 @@ Weather: {
 
 
 
-
-            // 3. COMPASS MODULE
-            Compass: {
-                init() {
-                    if (window.DeviceOrientationEvent) {
-                        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                            DeviceOrientationEvent.requestPermission().then(state => {
-                                if(state === 'granted') this.start();
-                            });
-                        } else {
-                            this.start();
-                        }
+// 3. COMPASS MODULE
+Compass: {
+    init() {
+        // Kontrollojmë nëse pajisja është iOS (kërkon leje eksplicite)
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(response => {
+                    if (response === 'granted') {
+                        this.start();
                     } else {
-                        App.UI.showToast("Sensori nuk mbështetet");
+                        App.UI.showToast("Leja u refuzua");
                     }
-                },
-                start() {
-                    window.addEventListener('deviceorientationabsolute', (e) => {
-                        const alpha = e.alpha || e.webkitCompassHeading;
-                        if(alpha === null) return;
-                        const qibla = 154.2; 
-                        document.getElementById('compass-ui').style.transform = `rotate(${-alpha}deg)`;
-                        document.getElementById('kaaba-marker').style.transform = `rotate(${qibla}deg)`;
-                        document.getElementById('heading-val').innerText = Math.floor(alpha) + '°';
-                    }, true);
-                    App.UI.showToast("Busulla u sinkronizua");
-                }
-            },
+                })
+                .catch(() => App.UI.showToast("Kërkohet HTTPS për sensorët"));
+        } else {
+            // Për Android ose browserë që nuk kërkojnë leje specifike
+            this.start();
+        }
+    },
+
+    start() {
+        const compassUI = document.getElementById('compass-ui');
+        const kaabaMarker = document.getElementById('kaaba-marker');
+        const headingVal = document.getElementById('heading-val');
+        const qiblaAngle = 154.2; // Këndi preciz për Ratkocin
+
+        const handleOrientation = (e) => {
+            let heading = e.webkitCompassHeading || e.alpha;
+
+            if (typeof heading === 'undefined' || heading === null) return;
+
+            // Rregullim për Android (alpha rritet në drejtim të kundërt me akrepat e sahatit)
+            if (!e.webkitCompassHeading && e.absolute !== true) {
+                // Nëse nuk është iOS, shpesh duhet të kthejmë vlerën
+                heading = 360 - heading;
+            }
+
+            // 1. Rrotullojmë të gjithë rrethin e busullës në bazë të lëvizjes së telefonit
+            compassUI.style.transform = `rotate(${-heading}deg)`;
+
+            // 2. Treguesi i Qibles duhet të qëndrojë fiks në 154.2° në raport me Veriun (0°)
+            // Duke qenë se busulla rrotullohet, ky marker do të tregojë gjithmonë Mekën realisht
+            kaabaMarker.style.transform = `rotate(${qiblaAngle}deg)`;
+
+            // 3. Përditësojmë tekstin e shkallëve (Heading)
+            headingVal.innerText = Math.floor(heading) + '°';
+
+            // Feedback vizual: Nëse përdoruesi është i rreshtuar me KIBLEN (gabim +/- 5 shkallë)
+            const diff = Math.abs(heading - qiblaAngle);
+            if (diff < 5 || diff > 355) {
+                compassUI.style.borderColor = "#10b981"; // Emerald
+                compassUI.style.boxShadow = "0 0 30px rgba(16, 185, 129, 0.4)";
+            } else {
+                compassUI.style.borderColor = "rgba(16, 185, 129, 0.1)";
+                compassUI.style.boxShadow = "none";
+            }
+        };
+
+        // Dëgjuesi i duhur për saktësi absolute
+        if ('ondeviceorientationabsolute' in window) {
+            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+        } else if ('ondeviceorientation' in window) {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+        } else {
+            App.UI.showToast("Sensori nuk gjendet");
+        }
+
+        App.UI.showToast("Busulla u aktivizua");
+    }
+},
 
             // 4. UI & SETTINGS
             Settings: {
