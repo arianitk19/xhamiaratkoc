@@ -1,82 +1,37 @@
 const CACHE_NAME = 'xhamia-ratkoc-v1';
-const ASSETS = [
+const ASSETS_TO_CACHE = [
   '/',
-  '/index.html',
-  '/kibla.html',
-  '/njoftimet.html',
+  'index.html',
   'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js',
-  'https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css'
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap'
 ];
 
-// 1. Instalimi: Ruajtja e skedarëve për punë offline
+// Install Service Worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Duke ruajtur skedarët në cache...');
-      return cache.addAll(ASSETS);
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting(); // Aktivizohet menjëherë
 });
 
-// 2. Aktivizimi: Merr kontrollin e të gjitha faqeve menjëherë
+// Activate & Clean old caches
 self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
+  );
 });
 
-// 3. Strategjia Offline: Shërbe skedarët nga cache nëse nuk ka internet
+// Fetching strategy: Cache First, then Network
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
-});
-
-// 4. Njoftimet (Push Notifications)
-self.addEventListener('push', (event) => {
-  let data = { title: 'Xhamia e Ratkocit', body: 'Koha e namazit!' };
-  
-  if (event.data) {
-    try {
-      data = event.data.json();
-    } catch (e) {
-      data.body = event.data.text();
-    }
-  }
-
-  const options = {
-    body: data.body,
-    icon: 'https://cdn-icons-png.flaticon.com/512/2950/2950657.png',
-    badge: 'https://cdn-icons-png.flaticon.com/512/2950/2950657.png',
-    vibrate: [200, 100, 200],
-    data: { dateOfArrival: Date.now() },
-    actions: [
-      { action: 'open', title: 'Hap App-in' }
-    ]
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
-});
-
-// 5. Klikimi i njoftimit: Hap faqen kryesore
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
-      // Nëse aplikacioni është i hapur, bëji fokus
-      for (let client of windowClients) {
-        if (client.url.includes('/') && 'focus' in client) {
-          return client.focus();
-        }
-      }
-      // Nëse është i mbyllur, hape të ri
-      if (clients.openWindow) {
-        return clients.openWindow('/');
-      }
+    caches.match(event.request).then((cachedResponse) => {
+      return cachedResponse || fetch(event.request);
     })
   );
 });
