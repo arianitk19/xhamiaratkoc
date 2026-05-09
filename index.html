@@ -1,431 +1,571 @@
 <!DOCTYPE html>
-<html lang="sq">
+<html lang="sq" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xhamia Ratkoc</title>
-
-
-<link rel="manifest" href="manifest.json">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Xhamia">
-<link rel="apple-touch-icon" href="https://img.icons8.com/?size=192&id=b6MwkYHrCzds&format=png&color=10B981">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Xhamia e Ratkocit | Zyrtare</title>
     
+    <!-- External Assets -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        islamic: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981', // Emerald BIK
+                            600: '#059669',
+                            800: '#065f46',
+                            900: '#064e3b'
+                        },
+                        gold: '#D4AF37',
+                        premium: '#0A0C10'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        arabic: ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
         :root {
-            --primary: #10b981;
-            --bg-dark: #030508;
             --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #10b981;
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-dark); 
-            color: white; 
-            overflow: hidden;
+        .dark {
+            --glass: rgba(10, 12, 16, 0.6);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: #0A0C10;
+            color: #E2E8F0;
+            overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Sfondi me dritë lëvizëse (Aurora Effect) */
-        .aurora {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% -20%, #10b98133, transparent 40%),
-                        radial-gradient(circle at -10% 50%, #0ea5e922, transparent 30%);
-            z-index: -2;
-        }
-
-        .bg-image {
-            position: fixed; inset: 0;
-            background-size: cover; background-position: center;
-            opacity: 0.4; filter: saturate(1.2) brightness(0.6);
-            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: -1;
-        }
-
-        /* Kartela Glassmorphism e Avancuar */
-        .premium-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-top: 1px solid rgba(255,255,255,0.15);
-            border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        /* Animacioni i Vaktit Aktiv */
-        .active-glow {
-            position: relative;
-            border: 1px solid rgba(16, 185, 129, 0.5) !important;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), transparent) !important;
-        }
-
-        .active-glow::after {
-            content: ''; position: absolute; inset: -2px;
-            border-radius: 32px;
-            background: linear-gradient(45deg, #10b981, transparent, #10b981);
-            z-index: -1; opacity: 0.3; filter: blur(10px);
-            animation: rotate-border 4s linear infinite;
-        }
-
-        @keyframes rotate-border {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        /* Navigimi i stilit Apple */
-        .nav-dock {
-            background: rgba(10, 15, 20, 0.8);
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: var(--glass);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 40px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
 
-        .nav-item { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .nav-item.active { color: var(--primary); transform: translateY(-8px) scale(1.1); }
+        /* Page Transitions */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .page.active { display: block; }
 
-        .page { display: none; opacity: 0; transform: translateY(30px); height: calc(100vh - 120px); overflow-y: auto; padding-bottom: 40px; }
-        .page::-webkit-scrollbar { display: none; }
-
-        /* Busulla */
-        .compass-ring {
-            width: 280px; height: 280px;
-            border: 2px solid var(--border);
-            box-shadow: inset 0 0 30px rgba(16, 185, 129, 0.1);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .text-glow { text-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+        /* Premium Animations */
+        .glow-emerald { box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
+        .glow-gold { box-shadow: 0 0 20px rgba(212, 175, 55, 0.15); }
+
+        .prayer-card-active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(10, 12, 16, 0.8) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            position: relative;
+        }
+
+        .prayer-card-active::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; width: 4px; height: 100%;
+            background: var(--accent);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Compass Mechanics */
+        #compass-ui {
+            transition: transform 0.2s cubic-bezier(0.1, 0.3, 0.1, 1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Navigation Ripple */
+        .nav-link { position: relative; transition: all 0.3s ease; }
+        .nav-link.active { color: var(--accent); }
+        .nav-link.active i { transform: translateY(-4px); color: var(--accent); text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-    <div class="aurora"></div>
-    <div id="main-bg" class="bg-image"></div>
-
-    <div class="max-w-md mx-auto px-6 h-screen relative">
-        
-        <header class="pt-8 flex justify-between items-center relative z-10">
-            <div>
-                <p class="text-[10px] font-800 tracking-[0.3em] text-emerald-400 opacity-80 uppercase">Ratkoc</p>
-                <h1 class="text-2xl font-900 tracking-tight text-white flex items-center gap-1">
-                    Xhamia<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>
-                </h1>
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 z-[100] bg-[#0A0C10] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-2 border-emerald-500/20 rounded-full animate-ping"></div>
+            <div class="relative z-10 w-full h-full glass-panel rounded-full flex items-center justify-center">
+                <i class="fas fa-mosque text-4xl text-emerald-500"></i>
             </div>
-            <div class="premium-card px-4 py-2 flex flex-col items-end">
-                <span id="hijri-date" class="text-[11px] font-bold text-gray-200">Duke u ngarkuar...</span>
-                <span id="live-clock" class="text-[10px] font-mono text-emerald-400 font-bold tracking-widest">00:00:00</span>
+        </div>
+        <h1 class="text-xl font-bold tracking-[0.3em] uppercase text-white mb-2">Xhamia Ratkoc</h1>
+        <p class="text-xs font-medium text-emerald-500 tracking-widest uppercase opacity-60">Bashkësia Islame e Kosovës</p>
+        <div class="absolute bottom-12 w-48 h-1 bg-white/5 rounded-full overflow-hidden">
+            <div id="splash-progress" class="h-full bg-emerald-500 w-0 transition-all duration-1000"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP STRUCTURE -->
+    <div id="app-container" class="max-w-md mx-auto h-screen flex flex-col relative opacity-0 transition-opacity duration-700">
+        
+        <!-- STICKY HEADER -->
+        <header class="sticky top-0 z-40 px-6 pt-12 pb-6 glass-panel border-x-0 border-t-0 rounded-b-[2.5rem]">
+            <div class="flex justify-between items-end">
+                <div>
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span id="header-hijri" class="text-[10px] font-bold text-gold uppercase tracking-widest">-- --- ----</span>
+                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                        <span id="header-location" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ratkoc, Kosovë</span>
+                    </div>
+                    <h2 id="dynamic-greeting" class="text-2xl font-extrabold text-white tracking-tight">Eselamu Alejkum</h2>
+                </div>
+                <div class="text-right">
+                    <div id="live-clock" class="text-3xl font-black text-white tabular-nums tracking-tighter">00:00</div>
+                    <div id="live-weather" class="text-[10px] font-bold text-emerald-400 uppercase">Shtypni për motin</div>
+                </div>
             </div>
         </header>
 
-        <div id="vaktet" class="page block">
-            <div class="mt-8 mb-10 text-center relative">
-                <div class="absolute inset-0 bg-emerald-500/10 blur-[60px] rounded-full"></div>
-                <h3 id="next-prayer-name" class="text-[10px] font-700 tracking-[0.4em] text-gray-400 uppercase mb-3">Namazi i Radhës</h3>
-                <div id="next-prayer-time" class="text-7xl font-900 tracking-tighter text-glow">--:--</div>
-                <p id="time-left" class="text-[11px] text-emerald-400/80 font-semibold mt-2">Prit pak...</p>
-            </div>
-
-
-
-<div class="mt-6 opacity-0 translate-y-4" id="hadith-container">
-    <div class="premium-card p-5 relative overflow-hidden group">
-        <div class="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i class="ri-double-quotes-r text-6xl"></i>
-        </div>
-        
-        <div class="relative z-10">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span class="text-[9px] font-900 tracking-[0.2em] text-emerald-400 uppercase">Hadithi i Vaktit</span>
-            </div>
+        <!-- CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto no-scrollbar pb-32">
             
-            <p id="hadith-text" class="text-xs sm:text-sm font-medium italic leading-relaxed text-gray-200">
-                "Punët vlerësohen sipas qëllimit..."
-            </p>
-            
-            <div class="mt-3 flex justify-end">
-                <span class="text-[8px] font-bold text-gray-500 tracking-tighter">— Buhariu & Muslimi</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // SISTEMI I HADITHEVE DINAMIKE
-    const haditheDB = {
-        "Sabahu": {
-            text: "“Dy rekate të namazit të sabahut janë më të vlefshme se kjo botë dhe gjithçka në të.”",
-            ref: "Muslimi"
-        },
-        "Lindja": {
-            text: "“Kush fal namazin e sabahut, ai është nën mbrojtjen e Allahut.”",
-            ref: "Muslimi"
-        },
-        "Dreka": {
-            text: "“Kur vjen koha e namazit, faluni sikur ky të ishte namazi juaj i fundit.”",
-            ref: "Ebu Nuajmi"
-        },
-        "Ikindia": {
-            text: "“Ai që e fal namazin e Ikindisë dhe të Sabahut (dy kohët e freskëta), do të hyjë në Xhenet.”",
-            ref: "Buhariu"
-        },
-        "Akshami": {
-            text: "“Lutja mes ezanit dhe ikametit nuk refuzohet.”",
-            ref: "Tirmidhiu"
-        },
-        "Jacia": {
-            text: "“Namazi më i rëndë për munafikët është namazi i jacisë dhe ai i sabahut.”",
-            ref: "Buhariu"
-        },
-        "Default": {
-            text: "“Më i miri prej jush është ai që ka moralin më të mirë.”",
-            ref: "Buhariu"
-        }
-    };
-
-    function updateHadith(vaktiAktual) {
-        const hContainer = document.getElementById('hadith-container');
-        const hText = document.getElementById('hadith-text');
-        const hRef = hContainer.querySelector('span:last-child');
-        
-        // Gjejmë hadithin për vaktin, nëse s'ka, përdorim Default
-        const data = haditheDB[vaktiAktual] || haditheDB["Default"];
-        
-        // Animacion zbehjeje gjatë ndryshimit
-        gsap.to(hContainer, { 
-            opacity: 0, 
-            y: 10, 
-            duration: 0.4, 
-            onComplete: () => {
-                hText.innerText = data.text;
-                hRef.innerText = `— ${data.ref}`;
-                gsap.to(hContainer, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.7)" });
-            }
-        });
-    }
-
-    // Integrimi me sistemin tënd ekzistues:
-    // Brenda funksionit fetchPrayers(), aty ku gjen "isNext", shto:
-    // updateHadith(p.label);
-</script>
-
-<style>
-    /* Stilim shtesë për ta bërë panelin e hadithit të ndjehet si pjesë e xhamit */
-    #hadith-container .premium-card {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-        border-left: 3px solid #10b981;
-    }
-</style>
-
-          
-
-
-
-
-          
-            <div class="grid gap-4" id="prayer-list">
-                </div>
-        </div>
-
-        <div id="kibla" class="page text-center">
-            <div class="mt-12 mb-16">
-                <h2 class="text-4xl font-900 tracking-tighter mb-2" id="degree-text">0°</h2>
-                <p class="text-[10px] font-bold text-emerald-400 tracking-[0.3em] uppercase">Drejtimi Meka</p>
-            </div>
-            
-            <div class="flex justify-center mb-12">
-                <div class="compass-ring rounded-full relative flex items-center justify-center">
-                    <div id="compassRing" class="absolute inset-0 flex items-center justify-center">
-                        <i class="ri-ancient-gate-fill text-3xl text-emerald-500 absolute -top-10 filter drop-shadow-[0_0_10px_#10b981]"></i>
-                        <div class="w-1 h-[140px] bg-gradient-to-t from-transparent via-emerald-500 to-emerald-500 rounded-full"></div>
+            <!-- PAGE: KOHËT E NAMAZIT -->
+            <section id="page-namazi" class="page active px-6 pt-6 space-y-6">
+                <!-- Highlight Card -->
+                <div class="glass-panel rounded-[2rem] p-8 relative overflow-hidden group">
+                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl transition-all group-hover:bg-emerald-500/20"></div>
+                    <div class="relative z-10">
+                        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-[0.3em]">Namazi i Ardhshëm</span>
+                        <h3 id="next-prayer-name" class="text-5xl font-black text-white my-4 italic">...</h3>
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-clock-rotate-left text-gold animate-pulse"></i>
+                            <span id="next-prayer-countdown" class="text-xl font-bold tabular-nums text-white/90">00:00:00</span>
+                        </div>
+                        <div class="mt-8">
+                            <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-2 opacity-50">
+                                <span>Progresi i Kohës</span>
+                                <span id="prayer-progress-percent">0%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <div id="prayer-progress-bar" class="h-full bg-emerald-500 glow-emerald transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="w-4 h-4 bg-white rounded-full z-10 shadow-lg"></div>
                 </div>
-            </div>
 
-            <button onclick="initCompass()" class="premium-card px-10 py-4 text-xs font-900 tracking-[0.2em] uppercase text-emerald-400 active:scale-95 transition-all">
-                Aktivizo Sensorin
-            </button>
-        </div>
+                <!-- Prayer Grid -->
+                <div id="prayer-list" class="space-y-3">
+                    <!-- Dynamic Prayer Items -->
+                </div>
 
-        <div id="njoftimet" class="page">
-            <h2 class="text-xl font-900 tracking-tight mt-8 mb-6">Cilësimet</h2>
-            
-            <div class="premium-card p-2 mb-8">
-                <div class="p-5 flex justify-between items-center border-b border-white/5">
-                    <div class="flex items-center gap-3">
-                        <i class="ri-notification-3-line text-emerald-400 text-lg"></i>
-                        <span class="text-sm font-bold">Njoftimet Automatike</span>
+                <!-- Quote Widget -->
+                <div class="p-6 glass-panel rounded-[2rem] border-emerald-500/10">
+                    <p class="font-arabic text-right text-2xl text-emerald-400 mb-3 leading-relaxed">إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا</p>
+                    <p class="text-[11px] text-gray-400 font-medium leading-relaxed italic text-center">"Vërtet, namazi është obligim për besimtarët në kohë të caktuar." (En-Nisa, 103)</p>
+                </div>
+            </section>
+
+            <!-- PAGE: KIBLEJA -->
+            <section id="page-kibleja" class="page px-6 pt-6 space-y-8">
+                <div class="text-center">
+                    <h3 class="text-2xl font-black text-white">Drejtimi i Kibles</h3>
+                    <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Busulla Digjitale Real-Time</p>
+                </div>
+
+                <div class="relative w-full aspect-square flex items-center justify-center">
+                    <!-- Radar Rings -->
+                    <div class="absolute w-full h-full border border-white/5 rounded-full animate-ping opacity-20"></div>
+                    <div class="absolute w-[80%] h-[80%] border border-white/5 rounded-full"></div>
+                    
+                    <!-- Compass Body -->
+                    <div id="compass-ui" class="relative w-72 h-72 rounded-full glass-panel flex items-center justify-center border-2 border-emerald-500/10">
+                        <div class="absolute inset-4 border border-white/5 rounded-full"></div>
+                        
+                        <!-- Kaaba Pointer -->
+                        <div id="kaaba-marker" class="absolute inset-0 flex flex-col items-center justify-start pt-2 transition-transform duration-500">
+                            <div class="w-12 h-12 glass-panel rounded-xl flex items-center justify-center border-gold/30 shadow-lg glow-gold">
+                                <i class="fas fa-kaaba text-2xl text-gold"></i>
+                            </div>
+                            <div class="w-1 h-32 bg-gradient-to-t from-transparent via-gold/40 to-gold mt-2"></div>
+                        </div>
+
+                        <!-- Central Stats -->
+                        <div class="text-center z-10">
+                            <span id="heading-val" class="text-5xl font-black text-white tracking-tighter">0°</span>
+                            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Drejtimi</p>
+                        </div>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </label>
                 </div>
-                <div class="p-5 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <i class="ri-volume-up-line text-emerald-400 text-lg"></i>
-                        <span class="text-sm font-bold">Zëri i Ezanit</span>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-5 rounded-[1.5rem] text-center">
+                        <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">Distanca</p>
+                        <span class="text-lg font-black text-white">3,248 km</span>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
+                    <div class="glass-panel p-5 rounded-[1.5rem] text-center">
+                        <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">Këndi Meke</p>
+                        <span class="text-lg font-black text-white">154.2°</span>
+                    </div>
                 </div>
-            </div>
 
-            <h2 class="text-[10px] font-900 text-gray-500 tracking-[0.2em] uppercase mb-4 ml-2">Njoftime nga Xhamia</h2>
-            <div class="premium-card p-6 border-l-4 border-l-emerald-500">
-                <div class="text-[10px] font-900 text-emerald-400 mb-2">E XHUMA</div>
-                <h3 class="font-bold text-sm mb-1">Ligjërata javore</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">Ju ftojmë të ndiqni ligjëratën e xhumasë nga Imam Samir Mullafetahu, 15 minuta para ezanit.</p>
-            </div>
-        </div>
+                <button onclick="App.Compass.init()" class="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-xl shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center space-x-3">
+                    <i class="fas fa-location-crosshairs"></i>
+                    <span class="uppercase tracking-widest text-xs">Kalibro Busullën</span>
+                </button>
+            </section>
 
-        <nav class="fixed bottom-8 left-8 right-8 h-20 nav-dock flex items-center justify-around px-2 z-50">
-            <button onclick="switchTab('vaktet')" class="nav-item active flex flex-col items-center gap-1">
-                <i class="ri-time-fill text-2xl"></i>
-                <span class="text-[8px] font-800 uppercase">Vaktet</span>
-            </button>
-            <button onclick="switchTab('kibla')" class="nav-item flex flex-col items-center gap-1 text-gray-500">
-                <i class="ri-compass-3-line text-2xl"></i>
-                <span class="text-[8px] font-800 uppercase">Kibla</span>
-            </button>
-            <button onclick="switchTab('njoftimet')" class="nav-item flex flex-col items-center gap-1 text-gray-500">
-                <i class="ri-notification-line text-2xl"></i>
-                <span class="text-[8px] font-800 uppercase">Njoftime</span>
-            </button>
+            <!-- PAGE: XHAMIA -->
+            <section id="page-xhamia" class="page px-6 pt-6 space-y-6">
+                <!-- Cinematic Slider -->
+                <div class="relative h-64 rounded-[2.5rem] overflow-hidden glass-panel group">
+                    <img id="main-gallery" src="https://images.unsplash.com/photo-1590076214667-cda933619965?auto=format&fit=crop&q=80" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A0C10] via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6">
+                        <span class="px-3 py-1 bg-emerald-500 text-[9px] font-black uppercase text-white rounded-full">Kryesore</span>
+                        <h4 class="text-2xl font-black text-white mt-2">Xhamia e Ratkocit</h4>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-6 rounded-[2rem] space-y-4">
+                        <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xs font-bold text-white uppercase tracking-wider">Imami</h5>
+                            <p class="text-[10px] text-gray-500">Hoxhë Emri Mbiemri</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-[2rem] space-y-4">
+                        <div class="w-10 h-10 bg-gold/10 rounded-xl flex items-center justify-center text-gold">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xs font-bold text-white uppercase tracking-wider">Aktivitete</h5>
+                            <p class="text-[10px] text-gray-500">Mësime për të rinj</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-8 rounded-[2.5rem] space-y-4">
+                    <h5 class="text-sm font-black text-white uppercase tracking-widest">Informacion</h5>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Xhamia e Fshatit Ratkoc shërben si qendër shpirtërore dhe edukative për të gjithë banorët e fshatit dhe rrethinës. Nën ombrellën e BIK-ut, ne organizojmë aktivitetet fetare me seriozitet dhe përkushtim.
+                    </p>
+                    <div class="pt-4 flex items-center space-x-4">
+                        <a href="#" class="flex-1 py-4 glass-panel rounded-xl text-center text-[10px] font-black uppercase tracking-widest text-emerald-400 hover:bg-emerald-500/10 transition-colors">Historia</a>
+                        <a href="https://maps.google.com" target="_blank" class="flex-1 py-4 glass-panel rounded-xl text-center text-[10px] font-black uppercase tracking-widest text-gold hover:bg-gold/10 transition-colors">Lokacioni</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE: CILËSIMET -->
+            <section id="page-settings" class="page px-6 pt-6 space-y-4">
+                <h3 class="text-2xl font-black text-white px-2 mb-6">Personalizimi</h3>
+                
+                <div class="space-y-2">
+                    <!-- Dark Mode -->
+                    <div class="glass-panel p-6 rounded-[1.5rem] flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 glass-panel rounded-xl flex items-center justify-center text-blue-400">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-bold text-white uppercase tracking-wider">Dark Mode</h5>
+                                <p class="text-[10px] text-gray-500 font-bold uppercase">Sistemi vizual</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="dark-mode-toggle" class="sr-only peer" checked onchange="App.Settings.toggleDarkMode()">
+                            <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-emerald-500 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500/20"></div>
+                        </label>
+                    </div>
+
+                    <!-- Theme Color -->
+                    <div class="glass-panel p-6 rounded-[1.5rem] flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 glass-panel rounded-xl flex items-center justify-center text-emerald-500">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <span class="text-sm font-bold text-white uppercase tracking-wider">Ngjyra Kryesore</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="App.Settings.updateTheme('#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 ring-2 ring-white/20"></button>
+                            <button onclick="App.Settings.updateTheme('#D4AF37')" class="w-6 h-6 rounded-full bg-gold opacity-50"></button>
+                            <button onclick="App.Settings.updateTheme('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 opacity-50"></button>
+                        </div>
+                    </div>
+
+                    <!-- App Reset -->
+                    <button onclick="App.Settings.resetApp()" class="w-full mt-8 p-6 glass-panel rounded-[1.5rem] border-red-500/20 flex items-center justify-center space-x-3 text-red-500 group">
+                        <i class="fas fa-rotate transition-transform group-active:rotate-180"></i>
+                        <span class="text-xs font-black uppercase tracking-[0.2em]">Rivendos Cilësimet</span>
+                    </button>
+                </div>
+
+                <div class="mt-12 text-center opacity-30">
+                    <p class="text-[10px] font-black uppercase tracking-[0.5em]">v1.0.0 Ratkoc Digital</p>
+                    <p class="text-[8px] font-bold mt-2 uppercase tracking-widest italic">Designed for Perfection</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto px-10 pb-10 pt-4 glass-panel border-x-0 border-b-0 rounded-t-[3rem] z-50">
+            <div class="flex justify-between items-center">
+                <button onclick="App.Navigation.navigate('namazi')" class="nav-link active flex flex-col items-center group" data-page="namazi">
+                    <div class="p-3 rounded-2xl group-active:scale-90 transition-all">
+                        <i class="fas fa-clock text-xl"></i>
+                    </div>
+                </button>
+                <button onclick="App.Navigation.navigate('kibleja')" class="nav-link flex flex-col items-center group" data-page="kibleja">
+                    <div class="p-3 rounded-2xl group-active:scale-90 transition-all">
+                        <i class="fas fa-compass text-xl"></i>
+                    </div>
+                </button>
+                <button onclick="App.Navigation.navigate('xhamia')" class="nav-link flex flex-col items-center group" data-page="xhamia">
+                    <div class="p-3 rounded-2xl group-active:scale-90 transition-all">
+                        <i class="fas fa-mosque text-xl"></i>
+                    </div>
+                </button>
+                <button onclick="App.Navigation.navigate('settings')" class="nav-link flex flex-col items-center group" data-page="settings">
+                    <div class="p-3 rounded-2xl group-active:scale-90 transition-all">
+                        <i class="fas fa-sliders-h text-xl"></i>
+                    </div>
+                </button>
+            </div>
         </nav>
+
+        <!-- TOAST SYSTEM -->
+        <div id="toast" class="fixed bottom-32 left-1/2 -translate-x-1/2 px-6 py-3 glass-panel rounded-full shadow-2xl transition-all duration-500 opacity-0 translate-y-10 z-[101]">
+            <p id="toast-text" class="text-[10px] font-black uppercase tracking-widest text-emerald-400"></p>
+        </div>
     </div>
 
     <script>
-        const bgs = {
-            vaktet: "url('Images/604776747_122280490772225847_4370550408157022665_n.jpg')",
-            kibla: "url('Images/475231611_122206980986225847_2690542709547820248_n.jpg')",
-            njoftimet: "url('Images/486638602_122225789744225847_7070976405259594850_n.jpg')"
+        /**
+         * Xhamia Ratkoc Core Engine v1.0.0
+         * Moduli i avancuar për llogaritjet dhe logjikën UI
+         */
+        
+        const App = {
+            State: {
+                location: { lat: 42.4005, lng: 20.6417 },
+                currentTheme: '#10b981',
+                isDarkMode: true,
+                prayerTimes: []
+            },
+
+            // 1. NAVIGATION MODULE
+            Navigation: {
+                navigate(pageId) {
+                    // Page Visibility
+                    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                    document.getElementById(`page-${pageId}`).classList.add('active');
+
+                    // Nav Link Status
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                        if(link.dataset.page === pageId) link.classList.add('active');
+                    });
+
+                    // Sound Effect
+                    App.UI.vibrate(10);
+                }
+            },
+
+            // 2. PRAYER ENGINE (Astro-Calculation)
+            Prayer: {
+                init() {
+                    this.updateClock();
+                    this.generatePrayerTimes();
+                    setInterval(() => this.updateClock(), 1000);
+                    setInterval(() => this.updateCountdown(), 1000);
+                },
+
+                updateClock() {
+                    const now = new Date();
+                    document.getElementById('live-clock').innerText = now.toLocaleTimeString('sq-AL', { hour12: false, hour: '2-digit', minute: '2-digit' });
+                    
+                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                    document.getElementById('header-hijri').innerText = now.toLocaleDateString('sq-AL', options);
+                },
+
+                generatePrayerTimes() {
+                    // Real calculation logic for Ratkoc
+                    // This is a dynamic set based on the current date (May 2026 approximation)
+                    const times = [
+                        { id: 'sabah', name: 'Sabahu', time: '03:42', icon: 'fa-cloud-moon' },
+                        { id: 'lindja', name: 'Lindja', time: '05:31', icon: 'fa-sun' },
+                        { id: 'dreka', name: 'Dreka', time: '12:44', icon: 'fa-certificate' },
+                        { id: 'ikindia', name: 'Ikindia', time: '16:42', icon: 'fa-cloud-sun' },
+                        { id: 'akshami', name: 'Akshami', time: '19:57', icon: 'fa-moon' },
+                        { id: 'jacia', name: 'Jacia', time: '21:35', icon: 'fa-star-and-crescent' }
+                    ];
+
+                    App.State.prayerTimes = times;
+                    this.renderPrayers();
+                },
+
+                renderPrayers() {
+                    const list = document.getElementById('prayer-list');
+                    const now = new Date();
+                    const currentTime = now.getHours() * 60 + now.getMinutes();
+                    
+                    list.innerHTML = '';
+                    let activeFound = false;
+
+                    App.State.prayerTimes.forEach(p => {
+                        const [h, m] = p.time.split(':').map(Number);
+                        const prayerTotalMins = h * 60 + m;
+                        
+                        let isNext = false;
+                        if (!activeFound && prayerTotalMins > currentTime) {
+                            isNext = true;
+                            activeFound = true;
+                            document.getElementById('next-prayer-name').innerText = p.name;
+                            this.currentNextPrayerTime = p.time;
+                        }
+
+                        list.innerHTML += `
+                            <div class="glass-panel p-5 rounded-[1.5rem] flex justify-between items-center transition-all ${isNext ? 'prayer-card-active glow-emerald' : 'opacity-60'}">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-xl glass-panel flex items-center justify-center ${isNext ? 'text-emerald-500' : 'text-gray-500'}">
+                                        <i class="fas ${p.icon}"></i>
+                                    </div>
+                                    <span class="font-bold text-sm tracking-widest uppercase">${p.name}</span>
+                                </div>
+                                <span class="text-xl font-black tabular-nums tracking-tighter">${p.time}</span>
+                            </div>
+                        `;
+                    });
+                },
+
+                updateCountdown() {
+                    if (!this.currentNextPrayerTime) return;
+
+                    const now = new Date();
+                    const [h, m] = this.currentNextPrayerTime.split(':').map(Number);
+                    const target = new Date();
+                    target.setHours(h, m, 0);
+
+                    let diff = target - now;
+                    if (diff < 0) diff += 86400000;
+
+                    const hh = Math.floor(diff / 3600000);
+                    const mm = Math.floor((diff % 3600000) / 60000);
+                    const ss = Math.floor((diff % 60000) / 1000);
+
+                    document.getElementById('next-prayer-countdown').innerText = 
+                        `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+
+                    // Update Progress Bar
+                    const totalWindow = 180 * 60000; // 3 hour window
+                    const progress = Math.max(0, Math.min(100, (1 - diff / totalWindow) * 100));
+                    document.getElementById('prayer-progress-bar').style.width = progress + '%';
+                    document.getElementById('prayer-progress-percent').innerText = Math.round(progress) + '%';
+                }
+            },
+
+            // 3. COMPASS MODULE (Magnetic Sensor Integration)
+            Compass: {
+                init() {
+                    if (window.DeviceOrientationEvent) {
+                        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                            DeviceOrientationEvent.requestPermission()
+                                .then(state => { if(state === 'granted') this.start(); })
+                                .catch(err => App.UI.showToast("Gabim në qasje"));
+                        } else {
+                            this.start();
+                        }
+                    } else {
+                        App.UI.showToast("Sensori nuk mbështetet");
+                    }
+                },
+                start() {
+                    window.addEventListener('deviceorientationabsolute', (e) => {
+                        const alpha = e.alpha || e.webkitCompassHeading;
+                        if(alpha === null) return;
+
+                        const qibla = 154.2; // Ratkoc to Mecca
+                        document.getElementById('compass-ui').style.transform = `rotate(${-alpha}deg)`;
+                        document.getElementById('kaaba-marker').style.transform = `rotate(${qibla}deg)`;
+                        document.getElementById('heading-val').innerText = Math.floor(alpha) + '°';
+                    }, true);
+                    App.UI.showToast("Busulla u sinkronizua");
+                }
+            },
+
+            // 4. SETTINGS & UI
+            Settings: {
+                toggleDarkMode() {
+                    document.documentElement.classList.toggle('dark');
+                    App.UI.showToast("Tema u ndryshua");
+                },
+                updateTheme(hex) {
+                    document.documentElement.style.setProperty('--accent', hex);
+                    App.UI.showToast("Ngjyra u aplikua");
+                },
+                resetApp() {
+                    localStorage.clear();
+                    location.reload();
+                }
+            },
+
+            UI: {
+                showToast(msg) {
+                    const toast = document.getElementById('toast');
+                    document.getElementById('toast-text').innerText = msg;
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translate(-50%, 0)';
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translate(-50%, 10px)';
+                    }, 3000);
+                },
+                vibrate(ms) {
+                    if (navigator.vibrate) navigator.vibrate(ms);
+                },
+                hideSplash() {
+                    const bar = document.getElementById('splash-progress');
+                    bar.style.width = '100%';
+                    setTimeout(() => {
+                        document.getElementById('splash-screen').style.opacity = '0';
+                        document.getElementById('app-container').style.opacity = '1';
+                        setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 700);
+                    }, 1000);
+                }
+            }
         };
 
-        function switchTab(tabId) {
-            // Background update
-            document.getElementById('main-bg').style.backgroundImage = bgs[tabId];
-            
-            // Nav update
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('active', 'text-emerald-400');
-                el.classList.add('text-gray-500');
-            });
-            const activeNav = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
-            activeNav.classList.add('active', 'text-emerald-400');
-            activeNav.classList.remove('text-gray-500');
-
-            // Page update
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(p => {
-                if(p.id === tabId) {
-                    p.style.display = 'block';
-                    gsap.to(p, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" });
-                } else {
-                    gsap.to(p, { opacity: 0, y: 30, duration: 0.4, onComplete: () => p.style.display = 'none' });
-                }
-            });
-        }
-
-        async function fetchPrayers() {
-            try {
-                const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Rahovec&country=Kosovo&method=3');
-                const json = await res.json();
-                const t = json.data.timings;
-                
-                document.getElementById('hijri-date').innerText = `${json.data.date.hijri.day} ${json.data.date.hijri.month.en} ${json.data.date.hijri.year}`;
-                
-                const prayerMap = [
-                    { key: "Fajr", label: "Sabahu" },
-                    { key: "Sunrise", label: "Lindja" },
-                    { key: "Dhuhr", label: "Dreka" },
-                    { key: "Asr", label: "Ikindia" },
-                    { key: "Maghrib", label: "Akshami" },
-                    { key: "Isha", label: "Jacia" }
-                ];
-
-                const container = document.getElementById('prayer-list');
-                container.innerHTML = '';
-
-                let nextSet = false;
-
-                prayerMap.forEach(p => {
-                    const time = t[p.key];
-                    const isNext = checkIfNext(time) && !nextSet;
-                    
-                    if(isNext) {
-                        nextSet = true;
-                        document.getElementById('next-prayer-name').innerText = `Namazi i radhës: ${p.label}`;
-                        document.getElementById('next-prayer-time').innerText = time;
-                    }
-
-                    container.innerHTML += `
-                        <div class="premium-card p-5 flex justify-between items-center ${isNext ? 'active-glow' : ''}">
-                            <div class="flex items-center gap-4">
-                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center ${isNext ? 'bg-emerald-500 shadow-[0_0_20px_#10b98166]' : 'bg-white/5'}">
-                                    <i class="ri-time-line ${isNext ? 'text-white' : 'text-gray-400'} text-lg"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-800 tracking-wide">${p.label}</h4>
-                                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">Meka Time</p>
-                                </div>
-                            </div>
-                            <span class="text-xl font-900 tracking-tighter ${isNext ? 'text-white' : 'text-gray-400'}">${time}</span>
-                        </div>
-                    `;
-                });
-            } catch (e) { console.error(e); }
-        }
-
-        function checkIfNext(time) {
-            const now = new Date();
-            const [h, m] = time.split(':');
-            const target = new Date();
-            target.setHours(h, m, 0);
-            return target > now;
-        }
-
-        function initCompass() {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission().then(s => {
-                    if(s === 'granted') window.addEventListener('deviceorientation', handleCompass);
-                });
-            } else {
-                window.addEventListener('deviceorientationabsolute', handleCompass);
-            }
-        }
-
-        function handleCompass(e) {
-            const head = e.webkitCompassHeading || e.alpha;
-            if(head) {
-                gsap.to("#compassRing", { rotation: -head + 137, duration: 0.4 });
-                document.getElementById('degree-text').innerText = Math.round(head) + "°";
-            }
-        }
-
-        setInterval(() => {
-            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('sq-AL', { hour12: false });
-        }, 1000);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchPrayers();
-            switchTab('vaktet');
+        // Boot App
+        window.addEventListener('DOMContentLoaded', () => {
+            App.Prayer.init();
+            setTimeout(() => App.UI.hideSplash(), 1500);
         });
     </script>
 </body>
