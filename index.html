@@ -572,6 +572,31 @@
             App.Prayer.init();
             setTimeout(() => App.UI.hideSplash(), 1500);
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker u regjistrua me sukses!'))
+        .catch(err => console.log('Dështoi regjistrimi i SW:', err));
+    });
+  }
+
     </script>
 </body>
 </html>
